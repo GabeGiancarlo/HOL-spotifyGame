@@ -2,7 +2,7 @@
 
 A web-based guessing game that challenges players to predict whether an artist has higher or lower metrics (followers, popularity, monthly listeners) compared to a reference artist, using data from the Spotify API.
 
-![Spotify Higher or Lower Game](https://via.placeholder.com/800x400?text=Spotify+Higher+or+Lower+Game)
+![Spotify Higher or Lower Game]
 
 ## 📋 Overview
 
