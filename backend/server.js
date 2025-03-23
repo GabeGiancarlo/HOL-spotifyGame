@@ -1,18 +1,12 @@
-/**
- * Spotify Higher or Lower Game - Backend
- * This file sets up an Express server to handle API requests and game logic.
- */
-
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
 const app = express();
-app.use(cors()); // Enable CORS for frontend-backend communication
-app.use(express.json()); // Parse JSON request bodies
+app.use(cors());
+app.use(express.json());
 
-// Spotify API credentials (from .env file)
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
@@ -57,18 +51,21 @@ const getRandomArtist = async (token) => {
  * Fetches detailed information about an artist.
  * @param {string} token - Spotify API access token.
  * @param {string} artistId - The ID of the artist.
- * @return {Promise<Object>} Artist details (name, image, monthly listeners).
+ * @return {Promise<Object>} Artist details (name, image, and metrics).
  */
 const getArtistDetails = async (token, artistId) => {
-  const response = await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
+  const artistResponse = await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
   return {
-    name: response.data.name,
-    image: response.data.images[0]?.url || 'default_image_url', // Use a default image if none is available
-    monthlyListeners: response.data.followers.total,
+    name: artistResponse.data.name,
+    image: artistResponse.data.images[0]?.url || 'default_image_url',
+    followers: artistResponse.data.followers.total, // Total followers
+    popularity: artistResponse.data.popularity, // Artist popularity (0-100)
+    monthlyListeners: artistResponse.data.followers.total, // Simulated monthly listeners (using followers)
   };
 };
 
