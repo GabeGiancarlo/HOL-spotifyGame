@@ -114,7 +114,15 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.buttons button:hover {
+.buttons button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+.buttons button:hover:not(:disabled) {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
@@ -452,9 +460,9 @@ body {
   z-index: 200;
   box-shadow: 0 4px 30px rgba(29, 185, 84, 0.4);
   animation: 
-    metricAlertPop 0.5s ease-out,
-    metricAlertShake 0.5s ease-in-out 0.5s,
-    metricAlertFadeOut 0.5s ease-out 4.5s forwards;
+    metricAlertPop 0.3s ease-out,
+    metricAlertShake 0.2s ease-in-out 0.3s,
+    metricAlertFadeOut 0.5s ease-out 3.2s forwards;
   text-align: center;
   border: 3px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -497,10 +505,10 @@ body {
   0%, 100% {
     transform: translate(-50%, -50%);
   }
-  10%, 30%, 50%, 70%, 90% {
+  25%, 75% {
     transform: translate(-52%, -50%);
   }
-  20%, 40%, 60%, 80% {
+  50% {
     transform: translate(-48%, -50%);
   }
 }
@@ -534,4 +542,88 @@ body {
     opacity: 1;
     transform: translate(-50%, -50%);
   }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 99;
+}
+
+.tutorial-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, var(--secondary), #2a2a2a);
+  padding: 40px;
+  border-radius: 20px;
+  z-index: 100;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  animation: modalFadeIn 0.5s ease-out;
+  min-width: 320px;
+  max-width: 90%;
+  width: 400px;
+  color: var(--text-light);
+}
+
+.tutorial-modal h2 {
+  color: var(--text-light);
+  font-size: 2rem;
+  margin: 0 0 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-modal .steps {
+  text-align: left;
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+.tutorial-modal .step {
+  margin: 15px 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.tutorial-modal .step-number {
+  background: var(--primary);
+  color: var(--text-light);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.tutorial-modal .start-button {
+  background: var(--primary);
+  color: var(--text-light);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.tutorial-modal .start-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3);
 }

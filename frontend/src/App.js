@@ -17,6 +17,8 @@ const App = () => {
   const [finalScore, setFinalScore] = useState(0);
   const [guessHistory, setGuessHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [isGuessing, setIsGuessing] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // List of available metrics for comparison
   const metrics = [
@@ -50,6 +52,14 @@ const App = () => {
       localStorage.setItem('highScore', streak.toString());
     }
   }, [streak, highScore]);
+
+  // Add this useEffect for tutorial
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+    }
+  }, []);
 
   /**
    * Fetches two random artists from the backend.
@@ -88,11 +98,19 @@ const App = () => {
     }
   };
 
+  const handleStartGame = () => {
+    setShowTutorial(false);
+    localStorage.setItem('hasSeenTutorial', 'true');
+  };
+
   /**
    * Handles the user's guess (higher or lower).
    * @param {string} guess - The user's guess ('higher' or 'lower').
    */
   const handleGuess = (guess) => {
+    if (isGuessing) return; // Prevent double-clicks
+    setIsGuessing(true);
+
     const prevValue = previousArtist[comparisonMetric];
     const currValue = currentArtist[comparisonMetric];
     const isCorrect = guess === 'higher' ? currValue > prevValue : currValue < prevValue;
@@ -138,6 +156,7 @@ const App = () => {
           setShowResult(false);
         }
         setIsAnimating(false);
+        setIsGuessing(false);
       }, 1000);
     }, 1500);
   };
@@ -154,6 +173,33 @@ const App = () => {
 
   return (
     <div className="game-container">
+      {showTutorial && (
+        <div className="tutorial-modal">
+          <h2>How to Play</h2>
+          <div className="steps">
+            <div className="step">
+              <div className="step-number">1</div>
+              <div>Compare two Spotify artists based on different metrics (Followers, Popularity, Monthly Listeners)</div>
+            </div>
+            <div className="step">
+              <div className="step-number">2</div>
+              <div>Guess if the right artist has a higher or lower value than the left artist</div>
+            </div>
+            <div className="step">
+              <div className="step-number">3</div>
+              <div>Every 3 correct answers, the metric changes to keep things interesting</div>
+            </div>
+            <div className="step">
+              <div className="step-number">4</div>
+              <div>Build your streak and try to beat your high score!</div>
+            </div>
+          </div>
+          <button className="start-button" onClick={handleStartGame}>
+            Got it, Let's Play!
+          </button>
+        </div>
+      )}
+
       <div className={`streak ${streak > 0 && streak % 5 === 0 ? 'milestone' : ''}`}>
         Streak: <span className="highlight">{streak}</span> | High Score: <span className="highlight">{highScore}</span>
       </div>
@@ -200,8 +246,18 @@ const App = () => {
         <h2>{currentArtist.name}</h2>
         {!showMetric && (
           <div className="buttons">
-            <button onClick={() => handleGuess('lower')}>Lower</button>
-            <button onClick={() => handleGuess('higher')}>Higher</button>
+            <button 
+              onClick={() => handleGuess('lower')} 
+              disabled={isGuessing}
+            >
+              Lower
+            </button>
+            <button 
+              onClick={() => handleGuess('higher')} 
+              disabled={isGuessing}
+            >
+              Higher
+            </button>
           </div>
         )}
       </div>
