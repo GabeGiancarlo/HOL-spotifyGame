@@ -60,14 +60,6 @@ const App = () => {
     }
   }, [streak, highScore]);
 
-  // Add this useEffect for tutorial
-  useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeenTutorial) {
-      setShowTutorial(true);
-    }
-  }, []);
-
   /**
    * Fetches two random artists from the backend.
    */
@@ -177,6 +169,35 @@ const App = () => {
     }, 1500);
   };
 
+  if (showTutorial) {
+    return (
+      <div className="game-container">
+        <div className="tutorial-modal">
+          <h2>How to Play</h2>
+          <div className="steps">
+            <div className="step">
+              <div className="step-number">1</div>
+              <div>Compare two Spotify artists based on different metrics (Followers, Popularity, Monthly Listeners)</div>
+            </div>
+            <div className="step">
+              <div className="step-number">2</div>
+              <div>Guess if the second artist has higher or lower numbers than the first artist</div>
+            </div>
+            <div className="step">
+              <div className="step-number">3</div>
+              <div>Build your streak by making correct guesses</div>
+            </div>
+            <div className="step">
+              <div className="step-number">4</div>
+              <div>Every 3 correct guesses, the comparison metric changes</div>
+            </div>
+          </div>
+          <button onClick={handleStartGame}>Start Playing!</button>
+        </div>
+      </div>
+    );
+  }
+
   if (!previousArtist || !currentArtist) return (
     <div className="game-container">
       <div className="loading">
@@ -189,33 +210,6 @@ const App = () => {
 
   return (
     <div className="game-container">
-      {showTutorial && (
-        <div className="tutorial-modal">
-          <h2>How to Play</h2>
-          <div className="steps">
-            <div className="step">
-              <div className="step-number">1</div>
-              <div>Compare two Spotify artists based on different metrics (Followers, Popularity, Monthly Listeners)</div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div>Guess if the right artist has a higher or lower value than the left artist</div>
-            </div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <div>Every 3 correct answers, the metric changes to keep things interesting</div>
-            </div>
-            <div className="step">
-              <div className="step-number">4</div>
-              <div>Build your streak and try to beat your high score!</div>
-            </div>
-          </div>
-          <button className="start-button" onClick={handleStartGame}>
-            Got it, Let's Play!
-          </button>
-        </div>
-      )}
-
       <div className={`streak ${streak > 0 && streak % 5 === 0 ? 'milestone' : ''}`}>
         Streak: <span className="highlight">{streak}</span> | High Score: <span className="highlight">{highScore}</span>
       </div>
@@ -336,3 +330,4 @@ const App = () => {
 };
 
 export default App;
+
