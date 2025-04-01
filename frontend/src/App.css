@@ -672,17 +672,22 @@ body {
 @media (max-width: 775px) {
   .game-container {
     flex-direction: column;
-    padding: 10px;
+    padding: 0;
     gap: 0;
     min-height: 100vh;
-    justify-content: space-between;
+    justify-content: flex-start;
+    position: relative;
   }
 
   .artist-card {
     position: relative;
     width: 100%;
-    height: 45vh;
+    height: 50vh;
     margin: 0;
+  }
+
+  .artist-card::before {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
   }
 
   .left {
@@ -695,31 +700,42 @@ body {
 
   .streak {
     position: fixed;
-    top: 50%;
+    top: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.4rem;
-    padding: 12px 25px;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    padding: 8px 20px;
     white-space: nowrap;
     z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .streak .highlight {
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
   }
 
   .versus-indicator {
-    font-size: 2rem;
+    display: none;
   }
 
   .artist-card h2 {
-    font-size: 1.8rem;
-    bottom: 120px;
+    font-size: 1.6rem;
+    bottom: 80px;
   }
 
   .metric-overlay {
-    font-size: 1.4rem;
-    padding: 12px 20px;
+    font-size: 1.2rem;
+    padding: 8px 16px;
+    bottom: 40px;
+    top: auto;
   }
 
   .buttons {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
@@ -727,13 +743,17 @@ body {
     max-width: 300px;
     gap: 10px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
+    z-index: 30;
   }
 
   .button {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1rem;
+    width: auto;
+    flex: 1;
+    padding: 10px 20px;
+    font-size: 1rem;
+    max-width: 120px;
   }
 
   .slide-left {
