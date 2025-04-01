@@ -671,183 +671,110 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
   .game-container {
+    flex-direction: column;
     padding: 10px;
+    gap: 20px;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
   }
 
-  .streak {
-    font-size: 1rem;
-    padding: 8px 15px;
-    margin: 10px 0;
-    width: 100%;
-    text-align: center;
-  }
-
-  .cards-container {
-    display: flex;
+  .artist-cards {
     flex-direction: column;
-    align-items: center;
     gap: 20px;
     width: 100%;
-    max-width: 100%;
-    padding: 0 10px;
+    align-items: center;
   }
 
   .artist-card {
-    width: 100%;
-    max-width: 300px;
+    width: 90%;
+    max-width: 350px;
     margin: 0;
-    transform: none !important;
-  }
-
-  .artist-image {
-    width: 150px;
-    height: 150px;
-    margin: 10px auto;
+    aspect-ratio: 9/16;
   }
 
   .artist-name {
+    font-size: 1.5rem;
+    bottom: 120px;
+  }
+
+  .metric-label {
     font-size: 1.2rem;
+    bottom: 80px;
+  }
+
+  .metric-value {
+    font-size: 1.8rem;
+    bottom: 40px;
+  }
+
+  .vs-text {
+    font-size: 2rem;
     margin: 10px 0;
-    padding: 0 10px;
-    word-wrap: break-word;
-    text-align: center;
-    width: 100%;
+  }
+
+  .streak-container {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 25px;
+    margin: 10px auto;
+    width: 90%;
+    max-width: 350px;
   }
 
   .buttons {
-    flex-direction: column;
+    width: 90%;
+    max-width: 350px;
     gap: 10px;
-    width: 100%;
-    max-width: 300px;
-    margin: 20px 0;
-    padding: 0 10px;
+    margin: 0 auto;
   }
 
   .button {
-    width: 100%;
-    padding: 12px 20px;
-    font-size: 1rem;
-    margin: 0;
+    font-size: 1.2rem;
+    padding: 12px;
+    border-radius: 25px;
   }
 
   .tutorial-modal {
     width: 90%;
-    max-width: 400px;
+    max-width: 350px;
     padding: 20px;
-    margin: 20px;
   }
 
   .tutorial-modal h2 {
     font-size: 1.5rem;
   }
 
-  .step {
-    font-size: 0.9rem;
-    margin: 10px 0;
-  }
-
-  .step-number {
-    width: 24px;
-    height: 24px;
-    font-size: 0.9rem;
-  }
-
-  .metric-change {
-    font-size: 1.2rem;
-    padding: 15px;
-    width: 90%;
-    max-width: 300px;
-  }
-
-  .metric-change .music-note {
-    font-size: 1.5rem;
-  }
-
-  .game-over {
-    width: 90%;
-    max-width: 400px;
-    padding: 20px;
-    margin: 20px;
-  }
-
-  .game-over h2 {
-    font-size: 1.8rem;
-  }
-
-  .final-score {
-    font-size: 2.5rem;
-  }
-
-  .history-modal {
-    width: 90%;
-    max-width: 400px;
-    padding: 20px;
-    margin: 20px;
-  }
-
-  .history-modal h2 {
-    font-size: 1.5rem;
-  }
-
-  .history-list {
-    max-height: 60vh;
-  }
-
-  .history-item {
-    font-size: 0.9rem;
-    padding: 8px;
-  }
-
-  .history-item .artist-names {
-    font-size: 0.8rem;
-  }
-
-  .history-item .metric {
-    font-size: 0.7rem;
+  .tutorial-modal p {
+    font-size: 1rem;
   }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
-  .game-container {
-    padding: 5px;
-    gap: 15px;
-  }
-
-  .artist-image {
-    width: 120px;
-    height: 120px;
-  }
-
   .artist-name {
+    font-size: 1.3rem;
+    bottom: 100px;
+  }
+
+  .metric-label {
     font-size: 1rem;
-    margin: 8px 0;
+    bottom: 70px;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+    bottom: 35px;
+  }
+
+  .vs-text {
+    font-size: 1.5rem;
+  }
+
+  .streak-container {
+    font-size: 1rem;
   }
 
   .button {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-  }
-
-  .streak {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-    margin: 5px 0;
-  }
-
-  .metric-change {
     font-size: 1rem;
-    padding: 12px;
-  }
-
-  .metric-change .music-note {
-    font-size: 1.2rem;
+    padding: 10px;
   }
 }
 
