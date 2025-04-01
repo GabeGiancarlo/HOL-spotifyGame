@@ -672,22 +672,43 @@ body {
 @media (max-width: 768px) {
   .game-container {
     padding: 10px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
   }
 
   .streak {
     font-size: 1rem;
     padding: 8px 15px;
+    margin: 10px 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 10px;
   }
 
   .artist-card {
     width: 100%;
     max-width: 300px;
-    margin: 10px 0;
+    margin: 0;
+    transform: none !important;
   }
 
   .artist-image {
     width: 150px;
     height: 150px;
+    margin: 10px auto;
   }
 
   .artist-name {
@@ -695,6 +716,8 @@ body {
     margin: 10px 0;
     padding: 0 10px;
     word-wrap: break-word;
+    text-align: center;
+    width: 100%;
   }
 
   .buttons {
@@ -702,18 +725,22 @@ body {
     gap: 10px;
     width: 100%;
     max-width: 300px;
+    margin: 20px 0;
+    padding: 0 10px;
   }
 
   .button {
     width: 100%;
     padding: 12px 20px;
     font-size: 1rem;
+    margin: 0;
   }
 
   .tutorial-modal {
     width: 90%;
     max-width: 400px;
     padding: 20px;
+    margin: 20px;
   }
 
   .tutorial-modal h2 {
@@ -722,6 +749,7 @@ body {
 
   .step {
     font-size: 0.9rem;
+    margin: 10px 0;
   }
 
   .step-number {
@@ -733,6 +761,8 @@ body {
   .metric-change {
     font-size: 1.2rem;
     padding: 15px;
+    width: 90%;
+    max-width: 300px;
   }
 
   .metric-change .music-note {
@@ -743,6 +773,7 @@ body {
     width: 90%;
     max-width: 400px;
     padding: 20px;
+    margin: 20px;
   }
 
   .game-over h2 {
@@ -757,6 +788,7 @@ body {
     width: 90%;
     max-width: 400px;
     padding: 20px;
+    margin: 20px;
   }
 
   .history-modal h2 {
@@ -783,6 +815,11 @@ body {
 
 /* Small mobile devices */
 @media (max-width: 480px) {
+  .game-container {
+    padding: 5px;
+    gap: 15px;
+  }
+
   .artist-image {
     width: 120px;
     height: 120px;
@@ -790,6 +827,7 @@ body {
 
   .artist-name {
     font-size: 1rem;
+    margin: 8px 0;
   }
 
   .button {
@@ -800,6 +838,7 @@ body {
   .streak {
     font-size: 0.9rem;
     padding: 6px 12px;
+    margin: 5px 0;
   }
 
   .metric-change {
@@ -816,10 +855,19 @@ body {
 @media (max-height: 600px) and (orientation: landscape) {
   .game-container {
     padding: 5px;
+    gap: 10px;
+  }
+
+  .cards-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
   }
 
   .artist-card {
-    margin: 5px 0;
+    margin: 0;
+    width: 45%;
+    max-width: 200px;
   }
 
   .artist-image {
@@ -833,15 +881,33 @@ body {
   }
 
   .buttons {
+    flex-direction: row;
     gap: 5px;
+    margin: 10px 0;
   }
 
   .button {
     padding: 8px 15px;
     font-size: 0.9rem;
+    width: 45%;
   }
 
   .history-list {
     max-height: 50vh;
+  }
+}
+
+/* Fix for very small screens */
+@media (max-width: 320px) {
+  .artist-card {
+    max-width: 100%;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
   }
 }
