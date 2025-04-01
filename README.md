@@ -1,89 +1,53 @@
 # 🎵 Spotify Higher or Lower Game
 
-A modern, interactive web application that challenges players to compare Spotify artists' metrics. Built with React and Node.js, this project showcases full-stack development skills, API integration, and modern UI/UX design principles.
+A modern, interactive web application that challenges players to guess which Spotify artist has higher or lower metrics. Built with React and Node.js, this game demonstrates full-stack development skills and API integration.
 
-![Spotify Higher or Lower Game]
+## 🌟 Key Features
 
-## 🎯 Project Overview
+- **Interactive Gameplay**: Compare Spotify artists based on followers, popularity, and monthly listeners
+- **Responsive Design**: Fully responsive layout that works on all devices
+- **Real-time Updates**: Live feedback on guesses and streak tracking
+- **Dynamic Metrics**: Changes between different Spotify metrics every 3 correct guesses
+- **User Experience**: 
+  - Tutorial modal for first-time users
+  - Smooth animations and transitions
+  - High score tracking
+  - Guess history
+  - Mobile-optimized interface
 
-This portfolio project demonstrates proficiency in:
-- Modern React development with Hooks and state management
-- RESTful API integration with the Spotify Web API
-- Responsive design and fluid animations
-- Clean, maintainable code architecture
-- User experience optimization
+## 🛠️ Technical Implementation
 
-### ✨ Key Features
+### Frontend
+- React.js for UI components
+- CSS3 with modern animations and transitions
+- Responsive design with mobile-first approach
+- Environment-based configuration
+- SVG favicon and web manifest
 
-- **Dynamic Data Integration**: Real-time artist comparisons using Spotify's API
-- **Intelligent Game Logic**: Progressive difficulty system that adapts to player performance
-- **Polished UI/UX**: 
-  - Spotify-themed design language
-  - Smooth transitions and animations
-  - Responsive layout for all devices
-  - Interactive tutorials for new users
-- **Performance Optimization**: 
-  - Efficient state management
-  - Optimized API calls
-  - Debounced user interactions
-- **Local Storage Integration**: Persistent high scores and user preferences
-
-## 🚀 Technical Implementation
-
-### Architecture
-
-```
-HOL-spotifyGame/
-├── backend/
-│   ├── server.js         # Express server, Spotify API integration
-│   └── package.json      # Backend dependencies
-├── frontend/
-│   ├── src/
-│   │   ├── App.js        # Core game logic and React components
-│   │   ├── App.css       # Styled components and animations
-│   │   └── index.js      # React entry point
-│   └── package.json      # Frontend dependencies
-└── README.md
-```
-
-### Tech Stack
-
-- **Frontend**:
-  - React 18 with Hooks
-  - Modern CSS3 with custom animations
-  - Responsive design principles
-  - LocalStorage for data persistence
-
-- **Backend**:
-  - Node.js with Express
-  - RESTful API architecture
-  - Spotify Web API integration
-  - Environment variable configuration
-
-- **Development Tools**:
-  - Git for version control
-  - npm for package management
-  - ESLint for code quality
-  - Cross-platform compatibility
+### Backend
+- Node.js with Express
+- Spotify Web API integration
+- CORS configuration for secure API access
+- Environment variable management
 
 ## 🎮 Gameplay Features
 
-### Smart Difficulty Progression
-- Metric changes every 3 correct answers
-- Smooth transition animations
-- Visual feedback for user actions
+- **Multiple Metrics**:
+  - Followers count
+  - Popularity score (0-100)
+  - Monthly listeners
+- **Scoring System**:
+  - Streak counter
+  - High score tracking
+  - Local storage persistence
+- **Visual Feedback**:
+  - Correct/incorrect animations
+  - Metric change alerts
+  - Smooth card transitions
 
-### User Experience
-- First-time user tutorial
-- Intuitive UI with clear feedback
-- Engaging animations and transitions
-- Error handling and recovery
+## 🚀 Live Demo
 
-### Performance Features
-- Optimized API calls
-- Smooth state transitions
-- Debounced user interactions
-- Responsive across devices
+Play the game at: [Spotify Higher or Lower](https://gabrielgiancarloportfolio-3.netlify.app)
 
 ## 🛠️ Setup and Installation
 
@@ -95,64 +59,67 @@ HOL-spotifyGame/
 
 2. Install dependencies:
    ```bash
-   # Backend setup
+   # Install backend dependencies
    cd backend
    npm install
 
-   # Frontend setup
+   # Install frontend dependencies
    cd ../frontend
    npm install
    ```
 
-3. Configure environment:
-   ```bash
-   # In backend/.env
-   CLIENT_ID=your_spotify_client_id
-   CLIENT_SECRET=your_spotify_client_secret
-   ```
+3. Set up environment variables:
+   - Create `.env` file in the backend directory:
+     ```
+     CLIENT_ID=your_spotify_client_id
+     CLIENT_SECRET=your_spotify_client_secret
+     ```
+   - Create `.env` file in the frontend directory:
+     ```
+     REACT_APP_API_URL=http://localhost:5001
+     ```
 
-4. Start the servers:
+4. Start the development servers:
    ```bash
-   # Start backend (port 5001)
+   # Start backend server
    cd backend
    npm start
 
-   # Start frontend (port 3000)
-   cd ../frontend
+   # Start frontend server
+   cd frontend
    npm start
    ```
 
-## 💡 Development Highlights
+## 💻 Development Highlights
 
-- **State Management**: Efficient React state handling with hooks
-- **API Integration**: Secure Spotify API implementation
-- **Animation System**: Custom CSS animations for smooth transitions
-- **Error Handling**: Robust error management and recovery
-- **Performance**: Optimized rendering and API calls
-- **Accessibility**: Keyboard navigation and screen reader support
+- **Code Organization**:
+  - Modular component structure
+  - Clean separation of concerns
+  - Reusable utility functions
+- **Performance Optimizations**:
+  - Efficient state management
+  - Optimized animations
+  - Responsive image loading
+- **User Experience**:
+  - Intuitive interface
+  - Clear feedback system
+  - Smooth transitions
+  - Mobile-first design
 
 ## 🤝 Contributing
 
-Contributions are welcome! To contribute:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Commit changes: `git commit -m 'Add new feature'`
-4. Push to branch: `git push origin feature/new-feature`
-5. Submit a pull request
+## 📧 Contact
 
-## 📫 Contact & Connect
+For questions or feedback, please reach out through GitHub issues or email.
 
-- LinkedIn: [Gabe Giancarlo](https://www.linkedin.com/in/gabe-giancarlo-25a395255)
-- GitHub: [@GabeGiancarlo](https://github.com/GabeGiancarlo)
-- Portfolio: [Coming Soon]
-
-## 📜 License
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgements
+## 🙏 Acknowledgments
 
-- [Spotify Web API](https://developer.spotify.com/documentation/web-api/) for providing the artist data
-- Inspired by [Higher Lower Game](http://www.higherlowergame.com/)
-- Special thanks to the React and Node.js communities for their excellent documentation and resources
+- Spotify Web API for providing artist data
+- React.js community for excellent documentation and tools
+- All contributors and users of the application
