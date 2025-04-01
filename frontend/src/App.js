@@ -9,19 +9,32 @@ const App = () => {
   const [comparisonMetric, setComparisonMetric] = useState('followers'); // Current comparison metric
   const [showMetric, setShowMetric] = useState(false); // Controls whether the metric is displayed
   const [isAnimating, setIsAnimating] = useState(false); // Controls the slide animation
-  const [isCorrectGuess, setIsCorrectGuess] = useState(false); // Tracks if the guess was correct
+  const [isCorrectGuess, setIsCorrectGuess] = useState(null); // Tracks if the guess was correct
+  const [showResult, setShowResult] = useState(false);
+  const [highScore, setHighScore] = useState(0);
 
   // List of available metrics for comparison
   const metrics = [
-    { key: 'followers', label: 'Followers' },
-    { key: 'popularity', label: 'Popularity' },
-    { key: 'monthlyListeners', label: 'Monthly Listeners' },
+    { key: 'followers', label: 'Followers', format: (value) => new Intl.NumberFormat().format(value) },
+    { key: 'popularity', label: 'Popularity', format: (value) => `${value}/100` },
+    { key: 'monthlyListeners', label: 'Monthly Listeners', format: (value) => new Intl.NumberFormat().format(value) },
   ];
 
   // Fetch initial artists on component mount
   useEffect(() => {
     fetchArtists();
+    const savedHighScore = localStorage.getItem('highScore');
+    if (savedHighScore) {
+      setHighScore(parseInt(savedHighScore));
+    }
   }, []);
+
+  useEffect(() => {
+    if (streak > highScore) {
+      setHighScore(streak);
+      localStorage.setItem('highScore', streak.toString());
+    }
+  }, [streak, highScore]);
 
   /**
    * Fetches two random artists from the backend.
@@ -40,79 +53,108 @@ const App = () => {
     }
   };
 
+  const formatMetricValue = (value, metricKey) => {
+    const metric = metrics.find(m => m.key === metricKey);
+    return metric ? metric.format(value) : value;
+  };
+
   /**
    * Handles the user's guess (higher or lower).
    * @param {string} guess - The user's guess ('higher' or 'lower').
    */
   const handleGuess = (guess) => {
-    const isCorrect =
-      guess === 'higher'
-        ? currentArtist[comparisonMetric] > previousArtist[comparisonMetric]
-        : currentArtist[comparisonMetric] < previousArtist[comparisonMetric];
+    const prevValue = previousArtist[comparisonMetric];
+    const currValue = currentArtist[comparisonMetric];
+    const isCorrect = guess === 'higher' ? currValue > prevValue : currValue < prevValue;
 
-    setShowMetric(true); // Show the metric after the guess
-    setIsCorrectGuess(isCorrect); // Track if the guess was correct
+    setShowMetric(true);
+    setIsCorrectGuess(isCorrect);
+    setShowResult(true);
 
-    if (isCorrect) {
-      setIsAnimating(true); // Start the slide animation
+    setTimeout(() => {
+      setIsAnimating(true);
+      
       setTimeout(() => {
-        setStreak(streak + 1); // Increase the streak
-        if (currentArtist[comparisonMetric] > previousArtist[comparisonMetric]) {
-          setPreviousArtist(currentArtist); // Update the previous artist
-        }
-        setCurrentArtist(null); // Clear the current artist
-        setShowMetric(false); // Hide the metric
-        fetchArtists(); // Load new data during the animation
-        setIsAnimating(false); // End the slide animation
+        if (isCorrect) {
+          setStreak(streak + 1);
+          setPreviousArtist(currentArtist);
+          setCurrentArtist(null);
+          setShowMetric(false);
+          setShowResult(false);
+          fetchArtists();
 
-        // Shake-up feature: switch metric every 3 correct answers
-        if ((streak + 1) % 3 === 0) {
-          const currentIndex = metrics.findIndex((m) => m.key === comparisonMetric);
-          const nextIndex = (currentIndex + 1) % metrics.length;
-          setComparisonMetric(metrics[nextIndex].key); // Update the comparison metric
+          if ((streak + 1) % 3 === 0) {
+            const currentIndex = metrics.findIndex((m) => m.key === comparisonMetric);
+            const nextIndex = (currentIndex + 1) % metrics.length;
+            setComparisonMetric(metrics[nextIndex].key);
+          }
+        } else {
+          setShowResult(false);
+          setStreak(0);
+          setPreviousArtist(null);
+          setCurrentArtist(null);
+          setShowMetric(false);
+          fetchArtists();
         }
-      }, 1000); // Wait for the slide animation to complete
-    } else {
-      setIsAnimating(true); // Start the slide animation
-      setTimeout(() => {
-        alert(`Game over! Your streak: ${streak}`);
-        setStreak(0); // Reset the streak
-        setPreviousArtist(null); // Reset the previous artist
-        setCurrentArtist(null); // Reset the current artist
-        setShowMetric(false); // Hide the metric
-        fetchArtists(); // Fetch new artists
-        setIsAnimating(false); // End the slide animation
-      }, 1000); // Wait for the slide animation to complete
-    }
+        setIsAnimating(false);
+      }, 1000);
+    }, 1500);
   };
 
-  if (!previousArtist || !currentArtist) return <div>Loading...</div>;
+  if (!previousArtist || !currentArtist) return (
+    <div className="game-container">
+      <div className="loading">
+        <h1>Loading...</h1>
+      </div>
+    </div>
+  );
+
+  const currentMetric = metrics.find((m) => m.key === comparisonMetric);
 
   return (
     <div className="game-container">
-      {/* Left card: Previous artist/song (no animation) */}
+      <div className={`streak ${streak > 0 && streak % 5 === 0 ? 'milestone' : ''}`}>
+        Streak: {streak} | High Score: {highScore}
+      </div>
+
       <div className="artist-card left">
         <img src={previousArtist.image} alt={previousArtist.name} />
         <div className="metric-overlay">
-          {metrics.find((m) => m.key === comparisonMetric).label}
+          {currentMetric.label}:
+          {showMetric && (
+            <span className="fade-in">
+              {' '}{formatMetricValue(previousArtist[comparisonMetric], comparisonMetric)}
+            </span>
+          )}
         </div>
         <h2>{previousArtist.name}</h2>
-        {showMetric && <p className="fade-in">{previousArtist[comparisonMetric]}</p>}
       </div>
 
-      {/* Right card: Current artist/song (with animation) */}
+      <div className="versus-indicator">VS</div>
+
       <div className={`artist-card right ${isAnimating ? (isCorrectGuess ? 'slide-left' : 'slide-out-right') : ''}`}>
         <img src={currentArtist.image} alt={currentArtist.name} />
-        <div className="buttons">
-          <button onClick={() => handleGuess('lower')}>Lower</button>
-          <button onClick={() => handleGuess('higher')}>Higher</button>
+        {showResult && (
+          <div className={`result-overlay ${isCorrectGuess ? 'correct' : 'incorrect'}`}>
+            {isCorrectGuess ? '✓' : '✗'}
+          </div>
+        )}
+        <div className="metric-overlay">
+          {currentMetric.label}:
+          {showMetric && (
+            <span className="fade-in">
+              {' '}{formatMetricValue(currentArtist[comparisonMetric], comparisonMetric)}
+            </span>
+          )}
         </div>
         <h2>{currentArtist.name}</h2>
-        {showMetric && <p className="fade-in">{currentArtist[comparisonMetric]}</p>}
+        {!showMetric && (
+          <div className="buttons">
+            <button onClick={() => handleGuess('lower')}>Lower</button>
+            <button onClick={() => handleGuess('higher')}>Higher</button>
+          </div>
+        )}
       </div>
-
-      {/* Streak counter */}
-      <div className="streak">Streak: {streak}</div>
     </div>
   );
 };
