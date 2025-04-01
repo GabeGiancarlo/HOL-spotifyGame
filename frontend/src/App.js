@@ -29,6 +29,13 @@ const App = () => {
 
   // Move fetchArtists inside useEffect to avoid the dependency warning
   useEffect(() => {
+    // Check if this is the first visit
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+      return; // Don't fetch artists until tutorial is dismissed
+    }
+
     const fetchInitialArtists = async () => {
       try {
         const response = await axios.get('/api/artists');
@@ -98,9 +105,18 @@ const App = () => {
     }
   };
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     setShowTutorial(false);
     localStorage.setItem('hasSeenTutorial', 'true');
+    
+    // Fetch initial artists after tutorial is dismissed
+    try {
+      const response = await axios.get('/api/artists');
+      setPreviousArtist(response.data.artistA);
+      setCurrentArtist(response.data.artistB);
+    } catch (error) {
+      console.error('Error fetching artists:', error);
+    }
   };
 
   /**
