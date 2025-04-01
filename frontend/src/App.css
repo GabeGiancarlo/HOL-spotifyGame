@@ -733,7 +733,7 @@ body {
     position: absolute;
     font-size: 1.2rem;
     padding: 8px 16px;
-    top: 20px;
+    top: 40px;
     bottom: auto;
     left: 50%;
     transform: translateX(-50%);
