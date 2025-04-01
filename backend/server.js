@@ -10,22 +10,23 @@ const port = process.env.PORT || 5001;
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://gabrielgiancarloportfolio-3.netlify.app/' 
+    'https://gabrielgiancarloportfolio-3.netlify.app'
   ],
   credentials: true
 }));
 
 app.use(express.json());
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+// Spotify API configuration
+const SPOTIFY_CLIENT_ID = process.env.CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 /**
  * Fetches a Spotify API token using client credentials.
  * @return {Promise<string>} The access token.
  */
 const getToken = async () => {
-  const authString = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
+  const authString = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64');
   const response = await axios.post(
     'https://accounts.spotify.com/api/token',
     'grant_type=client_credentials',
