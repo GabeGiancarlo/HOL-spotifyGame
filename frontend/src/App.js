@@ -12,6 +12,11 @@ const App = () => {
   const [isCorrectGuess, setIsCorrectGuess] = useState(null); // Tracks if the guess was correct
   const [showResult, setShowResult] = useState(false);
   const [highScore, setHighScore] = useState(0);
+  const [showGameOver, setShowGameOver] = useState(false);
+  const [showMetricChange, setShowMetricChange] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
+  const [guessHistory, setGuessHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   // List of available metrics for comparison
   const metrics = [
@@ -20,9 +25,19 @@ const App = () => {
     { key: 'monthlyListeners', label: 'Monthly Listeners', format: (value) => new Intl.NumberFormat().format(value) },
   ];
 
-  // Fetch initial artists on component mount
+  // Move fetchArtists inside useEffect to avoid the dependency warning
   useEffect(() => {
-    fetchArtists();
+    const fetchInitialArtists = async () => {
+      try {
+        const response = await axios.get('/api/artists');
+        setPreviousArtist(response.data.artistA);
+        setCurrentArtist(response.data.artistB);
+      } catch (error) {
+        console.error('Error fetching artists:', error);
+      }
+    };
+
+    fetchInitialArtists();
     const savedHighScore = localStorage.getItem('highScore');
     if (savedHighScore) {
       setHighScore(parseInt(savedHighScore));
@@ -43,10 +58,10 @@ const App = () => {
     try {
       const response = await axios.get('/api/artists');
       if (!previousArtist) {
-        setPreviousArtist(response.data.artistA); // Set the first artist
-        setCurrentArtist(response.data.artistB); // Set the second artist
+        setPreviousArtist(response.data.artistA);
+        setCurrentArtist(response.data.artistB);
       } else {
-        setCurrentArtist(response.data.artistA); // Set the new artist
+        setCurrentArtist(response.data.artistA);
       }
     } catch (error) {
       console.error('Error fetching artists:', error);
@@ -58,6 +73,21 @@ const App = () => {
     return metric ? metric.format(value) : value;
   };
 
+  const handlePlayAgain = async () => {
+    try {
+      const response = await axios.get('/api/artists');
+      setShowGameOver(false);
+      setStreak(0);
+      setShowMetric(false);
+      setGuessHistory([]);
+      setShowHistory(false);
+      setPreviousArtist(response.data.artistA);
+      setCurrentArtist(response.data.artistB);
+    } catch (error) {
+      console.error('Error fetching artists:', error);
+    }
+  };
+
   /**
    * Handles the user's guess (higher or lower).
    * @param {string} guess - The user's guess ('higher' or 'lower').
@@ -66,6 +96,18 @@ const App = () => {
     const prevValue = previousArtist[comparisonMetric];
     const currValue = currentArtist[comparisonMetric];
     const isCorrect = guess === 'higher' ? currValue > prevValue : currValue < prevValue;
+
+    // Add to guess history
+    const historyEntry = {
+      artist1: previousArtist.name,
+      artist2: currentArtist.name,
+      metric: currentMetric.label,
+      guess,
+      isCorrect,
+      value1: formatMetricValue(prevValue, comparisonMetric),
+      value2: formatMetricValue(currValue, comparisonMetric)
+    };
+    setGuessHistory(prev => [...prev, historyEntry]);
 
     setShowMetric(true);
     setIsCorrectGuess(isCorrect);
@@ -87,14 +129,13 @@ const App = () => {
             const currentIndex = metrics.findIndex((m) => m.key === comparisonMetric);
             const nextIndex = (currentIndex + 1) % metrics.length;
             setComparisonMetric(metrics[nextIndex].key);
+            setShowMetricChange(true);
+            setTimeout(() => setShowMetricChange(false), 5000);
           }
         } else {
+          setFinalScore(streak);
+          setShowGameOver(true);
           setShowResult(false);
-          setStreak(0);
-          setPreviousArtist(null);
-          setCurrentArtist(null);
-          setShowMetric(false);
-          fetchArtists();
         }
         setIsAnimating(false);
       }, 1000);
@@ -114,8 +155,17 @@ const App = () => {
   return (
     <div className="game-container">
       <div className={`streak ${streak > 0 && streak % 5 === 0 ? 'milestone' : ''}`}>
-        Streak: {streak} | High Score: {highScore}
+        Streak: <span className="highlight">{streak}</span> | High Score: <span className="highlight">{highScore}</span>
       </div>
+
+      {showMetricChange && (
+        <div className="metric-change-alert">
+          New Category!
+          <div className="category-text">
+            {currentMetric.label}
+          </div>
+        </div>
+      )}
 
       <div className="artist-card left">
         <img src={previousArtist.image} alt={previousArtist.name} />
@@ -155,6 +205,60 @@ const App = () => {
           </div>
         )}
       </div>
+
+      {showGameOver && (
+        <div className="game-over-modal">
+          <h2>Game Over!</h2>
+          <p>Your final score:</p>
+          <div className="score">{finalScore}</div>
+          <div className="action-buttons">
+            <button className="play-again" onClick={handlePlayAgain}>
+              Play Again
+            </button>
+            <button className="history" onClick={() => setShowHistory(!showHistory)}>
+              {showHistory ? 'Hide History' : 'Show History'}
+            </button>
+          </div>
+          {showHistory && (
+            <div className="guess-history">
+              {guessHistory.map((entry, index) => (
+                <div key={index} className={`history-entry ${entry.isCorrect ? 'correct' : 'incorrect'}`}>
+                  <div className="history-artists">
+                    {entry.artist1} vs {entry.artist2}
+                  </div>
+                  <div className="history-details">
+                    {entry.metric}: {entry.value1} vs {entry.value2}
+                  </div>
+                  <div className="history-guess">
+                    Guessed: {entry.guess} ({entry.isCorrect ? '✓' : '✗'})
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="social-section">
+            <p className="connect-text">Connect with me to view more projects:</p>
+            <div className="social-links">
+              <a 
+                href="https://www.linkedin.com/in/gabe-giancarlo-25a395255" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="social-link"
+              >
+                LinkedIn
+              </a>
+              <a 
+                href="https://github.com/GabeGiancarlo" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="social-link"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
