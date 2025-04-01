@@ -12,9 +12,11 @@ This interactive game presents players with two music artists from Spotify. The 
 
 - **Dynamic Artist Comparisons**: Random artist pairings for unlimited gameplay
 - **Multiple Comparison Metrics**: Compare artists based on followers, popularity, or monthly listeners
-- **Progressive Difficulty**: Metric changes every 3 correct answers to keep the game challenging
+- **Progressive Difficulty**: Metric changes every 3 correct answers with stylish transition effects
 - **Streak Tracking**: Keep track of your consecutive correct guesses
-- **Smooth Animations**: Visual feedback for correct and incorrect guesses
+- **Spotify-Themed UI**: Beautiful animations and styling matching Spotify's aesthetic
+- **Visual Feedback**: Enhanced alerts and transitions for metric changes
+- **Responsive Design**: Optimized for both desktop and mobile play
 
 ## 🚀 Getting Started
 
@@ -28,8 +30,8 @@ This interactive game presents players with two music artists from Spotify. The 
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/spotify-higher-lower.git
-   cd spotify-higher-lower
+   git clone https://github.com/GabeGiancarlo/HOL-spotifyGame.git
+   cd HOL-spotifyGame
    ```
 
 2. Install dependencies for both backend and frontend:
@@ -52,25 +54,35 @@ This interactive game presents players with two music artists from Spotify. The 
 4. Start the backend server:
    ```
    cd backend
-   node server.js
+   npm start
    ```
+   The server will run on port 5001.
 
 5. Start the frontend development server:
    ```
    cd ../frontend
    npm start
    ```
-
-6. Open your browser and navigate to `http://localhost:3000`
+   The game will be available at `http://localhost:3000`
 
 ## 🎮 How to Play
 
-1. You'll see two artists side by side with the metric being compared displayed
+1. You'll see two artists side by side with the current metric being compared
 2. For the artist on the right, guess whether they have a higher or lower value for the displayed metric
 3. Click "Higher" or "Lower" to make your guess
-4. After each guess, the actual values will be revealed
-5. If correct, your streak increases and a new artist appears
-6. If incorrect, the game ends and your final streak is displayed
+4. After each guess, the actual values will be revealed with smooth animations
+5. Every 3 correct answers, the metric changes with a stylish transition effect
+6. Keep going to build your streak and try to beat your high score!
+
+## 🎨 Visual Features
+
+- **Spotify-Inspired Design**: Utilizes Spotify's signature green gradient and styling
+- **Dynamic Animations**: Smooth transitions for artist changes and metric reveals
+- **Enhanced Metric Changes**: 
+  - Dramatic "New Category!" alert with glowing effects
+  - Music note animation
+  - Extended 5-second display for better visibility
+  - Polished text hierarchy and spacing
 
 ## 🛠️ Tech Stack
 
@@ -82,7 +94,7 @@ This interactive game presents players with two music artists from Spotify. The 
 ## 📝 Project Structure
 
 ```
-spotify-higher-lower/
+HOL-spotifyGame/
 ├── backend/
 │   ├── server.js         # Express server and Spotify API integration
 │   └── package.json      # Backend dependencies
@@ -90,7 +102,7 @@ spotify-higher-lower/
 │   ├── public/           # Static files
 │   ├── src/
 │   │   ├── App.js        # Main game component
-│   │   ├── App.css       # Styling
+│   │   ├── App.css       # Styling and animations
 │   │   └── index.js      # React entry point
 │   └── package.json      # Frontend dependencies
 └── README.md             # Project documentation
