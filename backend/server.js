@@ -4,7 +4,17 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+const port = process.env.PORT || 5001;
+
+// CORS configuration
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://gabrielgiancarloportfolio-3.netlify.app/' 
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -87,5 +97,4 @@ app.get('/api/artists', async (req, res) => {
 });
 
 // Start the server
-const PORT = 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));

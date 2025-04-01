@@ -33,4 +33,9 @@ yarn-error.log*
 .npm
 
 # Optional eslint cache
-.eslintcache 
+.eslintcache
+
+# Cursor
+.cursor
+.cursorrules
+.cursorignore 

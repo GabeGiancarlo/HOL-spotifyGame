@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+// Set up axios with base URL from environment variable
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
 const App = () => {
   const [previousArtist, setPreviousArtist] = useState(null); // Stores the previous artist/song
   const [currentArtist, setCurrentArtist] = useState(null); // Stores the current artist/song
