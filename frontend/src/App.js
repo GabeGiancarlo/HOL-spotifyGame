@@ -22,12 +22,31 @@ const App = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [isGuessing, setIsGuessing] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showGenreSelect, setShowGenreSelect] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState('pop');
+  const [extraLives, setExtraLives] = useState(0);
+  const [showExtraLifeEarned, setShowExtraLifeEarned] = useState(false);
+  const [showLifeLost, setShowLifeLost] = useState(false);
 
   // List of available metrics for comparison
   const metrics = [
     { key: 'followers', label: 'Followers', format: (value) => new Intl.NumberFormat().format(value) },
     { key: 'popularity', label: 'Popularity', format: (value) => `${value}/100` },
     { key: 'monthlyListeners', label: 'Monthly Listeners', format: (value) => new Intl.NumberFormat().format(value) },
+  ];
+
+  // List of available genres
+  const genres = [
+    { id: 'pop', name: 'Pop' },
+    { id: 'rock', name: 'Rock' },
+    { id: 'hip-hop', name: 'Hip Hop' },
+    { id: 'electronic', name: 'Electronic' },
+    { id: 'jazz', name: 'Jazz' },
+    { id: 'classical', name: 'Classical' },
+    { id: 'country', name: 'Country' },
+    { id: 'r-n-b', name: 'R&B' },
+    { id: 'metal', name: 'Metal' },
+    { id: 'indie', name: 'Indie' }
   ];
 
   // Move fetchArtists inside useEffect to avoid the dependency warning
@@ -38,6 +57,7 @@ const App = () => {
       setShowTutorial(true);
       return; // Don't fetch artists until tutorial is dismissed
     }
+    setShowGenreSelect(true);
 
     const fetchInitialArtists = async () => {
       try {
@@ -66,9 +86,9 @@ const App = () => {
   /**
    * Fetches two random artists from the backend.
    */
-  const fetchArtists = async () => {
+  const fetchArtists = async (genre = selectedGenre) => {
     try {
-      const response = await axios.get('/api/artists');
+      const response = await axios.get(`/api/artists?genre=${genre}`);
       if (!previousArtist) {
         setPreviousArtist(response.data.artistA);
         setCurrentArtist(response.data.artistB);
@@ -85,19 +105,19 @@ const App = () => {
     return metric ? metric.format(value) : value;
   };
 
+  const handleGenreSelect = async (genre) => {
+    setSelectedGenre(genre);
+    setShowGenreSelect(false);
+    await fetchArtists(genre);
+  };
+
   const handlePlayAgain = async () => {
-    try {
-      const response = await axios.get('/api/artists');
-      setShowGameOver(false);
-      setStreak(0);
-      setShowMetric(false);
-      setGuessHistory([]);
-      setShowHistory(false);
-      setPreviousArtist(response.data.artistA);
-      setCurrentArtist(response.data.artistB);
-    } catch (error) {
-      console.error('Error fetching artists:', error);
-    }
+    setShowGameOver(false);
+    setStreak(0);
+    setShowMetric(false);
+    setGuessHistory([]);
+    setShowHistory(false);
+    setShowGenreSelect(true);
   };
 
   const handleStartGame = async () => {
@@ -154,7 +174,15 @@ const App = () => {
           setShowResult(false);
           fetchArtists();
 
-          if ((streak + 1) % 3 === 0) {
+          // Check for extra life milestone (every 3 correct guesses)
+          if ((streak + 1) % 3 === 0 && extraLives === 0) {  // Only award if no extra lives
+            setExtraLives(prev => prev + 1);
+            setShowExtraLifeEarned(true);
+            setTimeout(() => setShowExtraLifeEarned(false), 3000);
+          }
+
+          // Change metric every 5 correct guesses
+          if ((streak + 1) % 5 === 0) {
             const currentIndex = metrics.findIndex((m) => m.key === comparisonMetric);
             const nextIndex = (currentIndex + 1) % metrics.length;
             setComparisonMetric(metrics[nextIndex].key);
@@ -162,15 +190,48 @@ const App = () => {
             setTimeout(() => setShowMetricChange(false), 5000);
           }
         } else {
-          setFinalScore(streak);
-          setShowGameOver(true);
-          setShowResult(false);
+          if (extraLives > 0) {
+            // Use an extra life
+            setExtraLives(prev => prev - 1);
+            setShowResult(false);
+            setShowMetric(false);
+            setPreviousArtist(currentArtist);
+            setCurrentArtist(null);
+            setShowLifeLost(true);
+            setTimeout(() => setShowLifeLost(false), 3000);
+            fetchArtists();
+          } else {
+            setFinalScore(streak);
+            setShowGameOver(true);
+            setShowResult(false);
+          }
         }
         setIsAnimating(false);
         setIsGuessing(false);
       }, 1000);
     }, 1500);
   };
+
+  if (showGenreSelect) {
+    return (
+      <div className="game-container">
+        <div className="genre-select-modal">
+          <h2>Select a Genre</h2>
+          <div className="genre-grid">
+            {genres.map((genre) => (
+              <button
+                key={genre.id}
+                className={`genre-button ${selectedGenre === genre.id ? 'selected' : ''}`}
+                onClick={() => handleGenreSelect(genre.id)}
+              >
+                {genre.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (showTutorial) {
     return (
@@ -215,7 +276,20 @@ const App = () => {
     <div className="game-container">
       <div className={`streak ${streak > 0 && streak % 5 === 0 ? 'milestone' : ''}`}>
         Streak: <span className="highlight">{streak}</span> | High Score: <span className="highlight">{highScore}</span>
+        {extraLives > 0 && <span className="extra-lives">❤️ {extraLives}</span>}
       </div>
+
+      {showExtraLifeEarned && (
+        <div className="extra-life-alert">
+          Extra Life Earned! ❤️
+        </div>
+      )}
+
+      {showLifeLost && (
+        <div className="life-lost-alert">
+          Life Lost! 💔
+        </div>
+      )}
 
       {showMetricChange && (
         <div className="metric-change-alert">

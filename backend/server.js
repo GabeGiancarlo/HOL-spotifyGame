@@ -43,12 +43,13 @@ const getToken = async () => {
 /**
  * Fetches a random artist from Spotify.
  * @param {string} token - Spotify API access token.
+ * @param {string} genre - The genre of the artist.
  * @return {Promise<Object>} A random artist object.
  */
-const getRandomArtist = async (token) => {
+const getRandomArtist = async (token, genre = 'pop') => {
   const offset = Math.floor(Math.random() * 1000); // Random offset for variety
   const response = await axios.get(
-    `https://api.spotify.com/v1/search?q=genre:pop&type=artist&limit=1&offset=${offset}`,
+    `https://api.spotify.com/v1/search?q=genre:${genre}&type=artist&limit=1&offset=${offset}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -86,8 +87,9 @@ const getArtistDetails = async (token, artistId) => {
 app.get('/api/artists', async (req, res) => {
   try {
     const token = await getToken(); // Get Spotify API token
-    const artistA = await getRandomArtist(token); // Fetch a random artist
-    const artistB = await getRandomArtist(token); // Fetch another random artist
+    const genre = req.query.genre || 'pop'; // Get genre from query parameter, default to 'pop'
+    const artistA = await getRandomArtist(token, genre); // Fetch a random artist in the specified genre
+    const artistB = await getRandomArtist(token, genre); // Fetch another random artist in the same genre
     const detailsA = await getArtistDetails(token, artistA.id); // Get details for artist A
     const detailsB = await getArtistDetails(token, artistB.id); // Get details for artist B
     res.json({ artistA: detailsA, artistB: detailsB }); // Send the data to the frontend
