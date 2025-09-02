@@ -265,7 +265,8 @@ const App = () => {
   if (!previousArtist || !currentArtist) return (
     <div className="game-container">
       <div className="loading">
-        <h1>Loading...</h1>
+        <h1>Finding Great Artists...</h1>
+        <p>Searching for recognizable artists in {genres.find(g => g.id === selectedGenre)?.name}...</p>
       </div>
     </div>
   );

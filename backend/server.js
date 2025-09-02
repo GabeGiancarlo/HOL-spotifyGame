@@ -41,22 +41,55 @@ const getToken = async () => {
 };
 
 /**
- * Fetches a random artist from Spotify.
+ * Fetches a random artist from Spotify with better filtering for recognizable artists.
  * @param {string} token - Spotify API access token.
  * @param {string} genre - The genre of the artist.
  * @return {Promise<Object>} A random artist object.
  */
 const getRandomArtist = async (token, genre = 'pop') => {
-  const offset = Math.floor(Math.random() * 1000); // Random offset for variety
-  const response = await axios.get(
-    `https://api.spotify.com/v1/search?q=genre:${genre}&type=artist&limit=1&offset=${offset}`,
+  // Try multiple attempts to find a recognizable artist
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const offset = Math.floor(Math.random() * 500); // Reduced offset range for better quality
+    const response = await axios.get(
+      `https://api.spotify.com/v1/search?q=genre:${genre}&type=artist&limit=20&offset=${offset}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    
+    // Filter artists by popularity and followers to get more recognizable ones
+    const artists = response.data.artists.items.filter(artist => {
+      // Must have an image
+      if (!artist.images || artist.images.length === 0) return false;
+      
+      // Must have reasonable popularity (at least 20/100)
+      if (artist.popularity < 20) return false;
+      
+      // Must have reasonable follower count (at least 10,000 followers)
+      if (artist.followers.total < 10000) return false;
+      
+      return true;
+    });
+    
+    // If we found suitable artists, return a random one
+    if (artists.length > 0) {
+      return artists[Math.floor(Math.random() * artists.length)];
+    }
+  }
+  
+  // Fallback: if no suitable artists found, get any artist with an image
+  const fallbackResponse = await axios.get(
+    `https://api.spotify.com/v1/search?q=genre:${genre}&type=artist&limit=1&offset=${Math.floor(Math.random() * 100)}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  return response.data.artists.items[0];
+  
+  return fallbackResponse.data.artists.items[0];
 };
 
 /**
@@ -88,11 +121,48 @@ app.get('/api/artists', async (req, res) => {
   try {
     const token = await getToken(); // Get Spotify API token
     const genre = req.query.genre || 'pop'; // Get genre from query parameter, default to 'pop'
-    const artistA = await getRandomArtist(token, genre); // Fetch a random artist in the specified genre
-    const artistB = await getRandomArtist(token, genre); // Fetch another random artist in the same genre
-    const detailsA = await getArtistDetails(token, artistA.id); // Get details for artist A
-    const detailsB = await getArtistDetails(token, artistB.id); // Get details for artist B
-    res.json({ artistA: detailsA, artistB: detailsB }); // Send the data to the frontend
+    
+    // Fetch multiple artists to find a good pair with meaningful differences
+    let bestPair = null;
+    let maxDifference = 0;
+    
+    // Try up to 10 times to find a good pair
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const artistA = await getRandomArtist(token, genre);
+      const artistB = await getRandomArtist(token, genre);
+      
+      if (!artistA || !artistB) continue;
+      
+      const detailsA = await getArtistDetails(token, artistA.id);
+      const detailsB = await getArtistDetails(token, artistB.id);
+      
+      // Calculate the difference in followers (our main metric)
+      const difference = Math.abs(detailsA.followers - detailsB.followers);
+      const minDifference = Math.max(detailsA.followers, detailsB.followers) * 0.1; // At least 10% difference
+      
+      // If this pair has a better difference and meets minimum threshold, use it
+      if (difference > maxDifference && difference >= minDifference) {
+        maxDifference = difference;
+        bestPair = { artistA: detailsA, artistB: detailsB };
+      }
+      
+      // If we found a really good pair, break early
+      if (difference >= minDifference * 2) {
+        bestPair = { artistA: detailsA, artistB: detailsB };
+        break;
+      }
+    }
+    
+    // If no good pair found, use the last attempt
+    if (!bestPair) {
+      const artistA = await getRandomArtist(token, genre);
+      const artistB = await getRandomArtist(token, genre);
+      const detailsA = await getArtistDetails(token, artistA.id);
+      const detailsB = await getArtistDetails(token, artistB.id);
+      bestPair = { artistA: detailsA, artistB: detailsB };
+    }
+    
+    res.json(bestPair); // Send the data to the frontend
   } catch (error) {
     console.error('Error fetching artists:', error);
     res.status(500).json({ error: 'Failed to fetch artists' }); // Handle errors
